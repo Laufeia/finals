@@ -13,12 +13,14 @@ public:
 
 void mainMenu(){
 cout<<"Lindo & Friends"
-<<"[1] - Placeholder"
-<<"[2] - Placeholder"
-<<"[3] - Placeholder"
-<<"[4] - Placeholder"
-<<"[5] - Placeholder"
-<<"[6] - Placeholder";
+<<"[1] - New Computer/Laptop"
+<<"[2] - Rent Computer/Laptop"
+<<"[3] - Return a Computer/Laptop"
+<<"[4] - Show Computer/Laptop Specs"
+<<"[5] - Display all Computer/Laptop"
+<<"[6] - Check Computer/Laptop Availability"
+<<"[7] - Computer/Laptop Maintenance"
+<<"[8] - Exit";
 
 cin>>choice;
 
@@ -50,6 +52,10 @@ int main{
 		case 5:
 			break;
 		case 6:
+			break;
+		case 7:
+			break;
+		case 8:
 			break;
 	}
 	
