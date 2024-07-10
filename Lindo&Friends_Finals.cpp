@@ -5,24 +5,24 @@
 
 using namespace std;
 
-class blank{
+class Placeholder{
 protected:
-int choice;
 
 public:
+	
+	
 
 void mainMenu(){
-cout<<"Lindo & Friends"
-<<"[1] - New Computer/Laptop"
-<<"[2] - Rent Computer/Laptop"
-<<"[3] - Return a Computer/Laptop"
-<<"[4] - Show Computer/Laptop Specs"
-<<"[5] - Display all Computer/Laptop"
-<<"[6] - Check Computer/Laptop Availability"
-<<"[7] - Computer/Laptop Maintenance"
-<<"[8] - Exit";
-
-cin>>choice;
+cout<<"Lindo & Friends\n"
+<<"[1] - New Computer/Laptop\n"
+<<"[2] - Rent Computer/Laptop\n"
+<<"[3] - Return a Computer/Laptop\n"
+<<"[4] - Show Computer/Laptop Specs\n"
+<<"[5] - Display all Computer/Laptop\n"
+<<"[6] - Check Computer/Laptop Availability\n"
+<<"[7] - Computer/Laptop Maintenance\n"
+<<"[8] - Exit\n"
+<<"Choose: ";
 
 }
 
@@ -36,10 +36,15 @@ cin>>choice;
 
 
 
-int main{
+int main(){
+	int choice;//Lipat sa class kung kaya
 	
-	mainMenu();
+	Placeholder P;
+	bool k;
 	
+	P.mainMenu();
+	cin>>choice;
+	while(k){
 	switch(choice){
 		case 1:
 			break;
@@ -56,8 +61,11 @@ int main{
 		case 7:
 			break;
 		case 8:
+			cout<<"\nThank you for using Lindo & Friends Computer/Laptop Rental.";
+			return 0;
 			break;
 	}
+}
 	
 	return 0;
 }
