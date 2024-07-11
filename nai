@@ -1,1 +1,153 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <vector>
 
+using namespace std;
+
+class Computer {
+public:
+    string brand;
+    string model;
+    bool isAvailable;
+
+    Computer(string b, string m) : brand(b), model(m), isAvailable(true) {}
+
+    void displaySpecs() const {
+        cout << "Brand: " << brand << ", Model: " << model << endl;
+    }
+};
+
+class Placeholder {
+protected:
+    vector<Computer> computers;
+
+public:
+    void mainMenu() const {
+        cout << "Lindo & Friends\n"
+             << "[1] - New Computer/Laptop\n"
+             << "[2] - Rent Computer/Laptop\n"
+             << "[3] - Return a Computer/Laptop\n"
+             << "[4] - Show Computer/Laptop Specs\n"
+             << "[5] - Display all Computer/Laptop\n"
+             << "[6] - Check Computer/Laptop Availability\n"
+             << "[7] - Computer/Laptop Maintenance\n"
+             << "[8] - Exit\n"
+             << "Choose: ";
+    }
+
+    void addComputer() {
+        string brand, model;
+        cout << "Enter the brand: ";
+        cin >> brand;
+        cout << "Enter the model: ";
+        cin >> model;
+        computers.emplace_back(brand, model);
+        cout << "Computer/Laptop added successfully.\n";
+    }
+
+    void rentComputer() {
+        displayAllComputers();
+        int index;
+        cout << "Enter the index of the computer/laptop to rent: ";
+        cin >> index;
+        if (index >= 0 && index < computers.size() && computers[index].isAvailable) {
+            computers[index].isAvailable = false;
+            cout << "Computer/Laptop rented successfully.\n";
+        } else {
+            cout << "Invalid index or the computer/laptop is not available.\n";
+        }
+    }
+
+    void returnComputer() {
+        displayAllComputers();
+        int index;
+        cout << "Enter the index of the computer/laptop to return: ";
+        cin >> index;
+        if (index >= 0 && index < computers.size() && !computers[index].isAvailable) {
+            computers[index].isAvailable = true;
+            cout << "Computer/Laptop returned successfully.\n";
+        } else {
+            cout << "Invalid index or the computer/laptop was not rented.\n";
+        }
+    }
+
+    void showSpecs() const {
+        displayAllComputers();
+        int index;
+        cout << "Enter the index of the computer/laptop to show specs: ";
+        cin >> index;
+        if (index >= 0 && index < computers.size()) {
+            computers[index].displaySpecs();
+        } else {
+            cout << "Invalid index.\n";
+        }
+    }
+
+    void displayAllComputers() const {
+        for (int i = 0; i < computers.size(); ++i) {
+            cout << "[" << i << "] - Brand: " << computers[i].brand
+                 << ", Model: " << computers[i].model
+                 << ", Available: " << (computers[i].isAvailable ? "Yes" : "No") << endl;
+        }
+    }
+
+    void checkAvailability() const {
+        displayAllComputers();
+        int index;
+        cout << "Enter the index of the computer/laptop to check availability: ";
+        cin >> index;
+        if (index >= 0 && index < computers.size()) {
+            cout << (computers[index].isAvailable ? "Available" : "Not Available") << endl;
+        } else {
+            cout << "Invalid index.\n";
+        }
+    }
+
+    void maintenance() {
+        cout << "Maintenance functionality is not yet implemented.\n";
+    }
+};
+
+int main() {
+    Placeholder P;
+    int choice;
+    bool running = true;
+
+    while (running) {
+        P.mainMenu();
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                P.addComputer();
+                break;
+            case 2:
+                P.rentComputer();
+                break;
+            case 3:
+                P.returnComputer();
+                break;
+            case 4:
+                P.showSpecs();
+                break;
+            case 5:
+                P.displayAllComputers();
+                break;
+            case 6:
+                P.checkAvailability();
+                break;
+            case 7:
+                P.maintenance();
+                break;
+            case 8:
+                cout << "\nThank you for using Lindo & Friends Computer/Laptop Rental.\n";
+                running = false;
+                break;
+            default:
+                cout << "Invalid choice, please try again.\n";
+                break;
+        }
+    }
+
+    return 0;
+}
