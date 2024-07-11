@@ -1,6 +1,6 @@
 #include<iostream>
 #include<iomanip>
-
+#include<fstream>
 #include<string>
 
 using namespace std;
@@ -22,7 +22,7 @@ cout<<"Welcome to Lindo & Friends Laptop Rental\n"
 <<"[6] - Check Laptop Availability\n"
 <<"[7] - Laptop Maintenance\n"
 <<"[8] - Exit\n"
-<<"Choose: ";
+<<"Choice: ";
 
 }
 
@@ -31,29 +31,55 @@ cout<<"Welcome to Lindo & Friends Laptop Rental\n"
 
 //Fix this maybe idk ask master coder AKA Admain Abdullah Omar
 void addNew(){
-	cout<<"Processor & Chipset: ";
-	cin>>choice1;
-	cout<<"";
-	cin>>choice2;
-	cout<<"";
-	cin>>choice3;
-	cout<<"";
-	cin>>choice4;
-	cout<<"";
-	cin>>choice5;
-	cout<<"";
-	cin>>choice6;
-	cout<<"";
-	cin>>choice7;
+	int c;
+	string s,m,g,os,a;
+	
+	cout<<"\t\tSpecifications \n"
+	<<"Proccesor: ";
+	cin>>s;
+	cout<<"Memory: ";
+	cin>>m;
+	cout<<"Graphics: ";
+	cin>>g;
+	cout<<"Operating System: ";
+	cin>>os;
+	cout<<"Audio: ";
+	cin>>a;
 }
 
 
 //Make the bottom voids or functions an inheritance
-//void rent(){
-//	cout<<;
-//}
+void rent(){
+	int id;
+	string n,a;
+	cout<<"Customer ID: "<<id
+	<<"Name: ";
+	cin>>n;
+	cout<<"Address: ";
+	cin>>a;
+}
 
+//Change if needed and look at the pdf and word if what
 
+void give(){
+	cout<<"Return a Laptop";
+}
+
+void show(){
+	cout<<"Show Laptop";
+}
+
+void display(){
+	cout<<"Display Laptop";
+}
+
+void check(){
+	cout<<"Availability of ";
+}
+
+void maintenance(){
+	cout<<"Laptop need to";
+}
 
 
 
@@ -68,21 +94,25 @@ int main(){
 	cin>>choice;
 	switch(choice){
 		case 1:
-			break;
+			addNew();
 		case 2:
-			break;
+			rent();
 		case 3:
-			break;
+			give();
 		case 4:
-			break;
+			show();
 		case 5:
-			break;
+			display();
 		case 6:
-			break;
+			check();
 		case 7:
-			break;
+			maintenance();
 		case 8:
-			cout<<"\nThank you for using Lindo & Friends Laptop Rental.";
+			cout<<"\nThank you for using Lindo & Friends Laptop Rental."
+			<<"\nDeveloped By: Lead Programmer/Master Coder: Admain, Abdullah"
+			<<"\nDeveloped By: Lindo, Lance"
+			<<"\nDeveloped By: Alvarado, Rod"
+			<<"\nDeveloped By: Passion, Precious";
 			return 0;
 			break;
 		default:
