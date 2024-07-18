@@ -5,10 +5,10 @@
 #include <list>
 #include <deque>
 
-
 using namespace std;
 
-class Placeholder{
+//Laptop ADT
+class Laptop{
 protected:
 
 public:
@@ -90,7 +90,7 @@ void maintenance(){
 int main(){
 	int choice;//Lipat sa class kung kaya
 	
-	Placeholder P;
+	Laptop P;
 
 	
 	do{
