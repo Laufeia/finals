@@ -31,6 +31,28 @@ void display() const {
 	static void showCustomerDetails (VideoStore &store, int customerID);
 	static void listAllCustomers (VideoStore &store);
 	static void listVideosRentedByCustomer (VideoStore &store, int customerID);
+
+ // CustomerRent ADT (inherits from Customer)
+ class CustomerRent : public Customer {
+ public:
+	list<int> rentedLaptops;
+
+	CustomerRent(int id, string n, string a) : Customer(id, n, a) {}
+
+	void rentLaptop(int laptopID) {
+	rentedLaptops.push_back(laptopID);
+	}
+
+	void returnLaptop(int laptopID) {
+	rentedLaptops.remove(laptopID);
+	}
+
+	void displayRentedLaptops() const {
+	cout << "Laptops rented by Customer ID " << customerID << ":\n"; 
+	for (list<int>::const_iterator it = rentedLaptops.begin(); it != rentedLaptops.end(); ++it) {
+		cout << "Video ID: " << *it << endl;
+	}
+	}
 	
 	
 
