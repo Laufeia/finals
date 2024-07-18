@@ -284,36 +284,36 @@ void mainMenu() {
         continue;
     }
 
-    switch (choice) {
-        case 1:
-            addNewLaptop();
-            break;
-        case 2:
-            rentLaptop();
-            break;
-        case 3:
-            returnLaptop();
-            break;
-        case 4:
-            showLaptopSpecs();
-            break;
-        case 5:
-            displayAllLaptops();
-            break;
-        case 6:
-            checkLaptopAvailability();
-            break;
-        case 7:
-            maintenanceMenu();
-            break;
-        case 8:
-            running = false;
-            cout << "Exiting.\n";
-            break;
-        default:
-            cout << "Invalid Choice. Try again.\n\n";
-        }
+switch (choice) {
+    case 1:
+        addNewLaptop();
+        break;
+    case 2:
+        rentLaptop();
+        break;
+    case 3:
+        returnLaptop();
+        break;
+    case 4:
+        showLaptopSpecs();
+        break;
+    case 5:
+        displayAllLaptops();
+        break;
+    case 6:
+        checkLaptopAvailability();
+        break;
+    case 7:
+        maintenanceMenu();
+        break;
+    case 8:
+        running = false;
+        cout << "Exiting.\n";
+        break;
+    default:
+        cout << "Invalid Choice. Try again.\n\n";
     }
+}
 }
 
 };
