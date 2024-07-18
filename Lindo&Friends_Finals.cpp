@@ -107,7 +107,7 @@ void addNewLaptop() {
     string processor, memory, graphics, os, audio;
     cout << "\t\tSpecifications\n";
     cout << "Processor: ";
-    cin.ignore();  // To clear the newline character left by previous cin
+    cin.ignore();
     getline(cin, processor);
     cout << "Memory: ";
     getline(cin, memory);
@@ -123,20 +123,28 @@ void addNewLaptop() {
 
 
 void rentLaptop() {
-    int customerId, laptopId;
-    cout << "Customer ID: ";
-    cin >> customerId;
-    cout << "Laptop ID: ";
-    cin >> laptopId;
-    auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
-    if (laptop != laptops.end() && laptop->available) {
-        laptop->available = false;
-        customers[customerId].rentedLaptops.push_back(laptopId);
-        cout << "Laptop rented successfully!\n\n";
-    } else {
-        cout << "Laptop is not available.\n\n";
-    }
+    char choice;
+    do {
+        int customerId, laptopId;
+        cout << "Customer ID: ";
+        cin >> customerId;
+        cout << "Laptop ID: ";
+        cin >> laptopId;
+        auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
+        if (laptop != laptops.end() && laptop->available) {
+            laptop->available = false;
+            customers[customerId].rentedLaptops.push_back(laptopId);
+            cout << "Laptop rented successfully!\n\n";
+        } else {
+            cout << "Laptop is not available.\n\n";
+        }
+
+        cout << "Rent another Laptop? [Y/N]: ";
+        cin >> choice;
+        cin.ignore();
+    } while (choice == 'Y' || choice == 'y');
 }
+
 
 void returnLaptop() {
     int customerId, laptopId;
