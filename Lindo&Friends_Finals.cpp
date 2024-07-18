@@ -81,21 +81,51 @@ private:
 	void loadLaptops() {
     ifstream file("laptops.txt");
     if (file.is_open()) {
-        while (!file.eof()) {
+        string line;
+        while (getline(file, line)) {
+            if (line.empty()) continue; // Skip empty lines
+
             int id;
             string processor, memory, graphics, os, audio;
             bool available;
-            file >> id >> processor >> memory >> graphics >> os >> audio >> available;
-            if (file.fail()) break;
+
+            string label;
+            stringstream ss(line);
+
+            ss >> label >> id;
+            getline(file, line);
+            ss.clear(); ss.str(line);
+            ss >> label >> processor;
+            getline(file, line);
+            ss.clear(); ss.str(line);
+            ss >> label >> memory;
+            getline(file, line);
+            ss.clear(); ss.str(line);
+            ss >> label >> graphics;
+            getline(file, line);
+            ss.clear(); ss.str(line);
+            ss >> label >> os;
+            getline(file, line);
+            ss.clear(); ss.str(line);
+            ss >> label >> audio;
+            getline(file, line);
+            ss.clear(); ss.str(line);
+            ss >> label >> available;
+
             laptops.emplace_back(id, processor, memory, graphics, os, audio);
             laptops.back().available = available;
+
             if (id >= nextLaptopId) nextLaptopId = id + 1;
+
+            // Consume the empty line
+            getline(file, line);
         }
         file.close();
     } else {
         cout << "No laptops.txt file found. Creating a new one.\n";
     }
 }
+
 
 
 
@@ -129,21 +159,25 @@ private:
     }
 }
 
-
-
     void saveLaptops() {
     ofstream file("laptops.txt");
     if (file.is_open()) {
         for (const auto& laptop : laptops) {
-            file << laptop.id << " " << laptop.processor << " " << laptop.memory << " "
-                 << laptop.graphics << " " << laptop.os << " " << laptop.audio << " " 
-                 << laptop.available << endl;
+            file << "ID: " << laptop.id << "\n"
+                 << "Processor: " << laptop.processor << "\n"
+                 << "Memory: " << laptop.memory << "\n"
+                 << "Graphics: " << laptop.graphics << "\n"
+                 << "OS: " << laptop.os << "\n"
+                 << "Audio: " << laptop.audio << "\n"
+                 << "Available: " << laptop.available << "\n"
+                 << endl; 
         }
         file.close();
     } else {
         cout << "Error: Unable to open laptops.txt for saving.\n";
     }
 }
+
 
 void saveCustomers() {
     ofstream file("customers.txt");
