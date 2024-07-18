@@ -29,7 +29,7 @@ cout<<"Welcome to Lindo & Friends Laptop Rental\n"
 	
 };
 
-//Fix this maybe idk ask master coder AKA Admain Abdullah Omar
+
 void addNew(){
 	int c;
 	string s,m,g,os,a;
@@ -90,8 +90,17 @@ int main(){
 	Placeholder P;
 
 	
+	do{
 	P.mainMenu();
 	cin>>choice;
+	
+		if (cin.fail()){
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout<<"Invalid. Choose only what is shown.\n\n";
+		continue;
+	}
+	
 	switch(choice){
 		case 1:
 			addNew();
@@ -108,17 +117,11 @@ int main(){
 		case 7:
 			maintenance();
 		case 8:
-			cout<<"\nThank you for using Lindo & Friends Laptop Rental."
-			<<"\nDeveloped By: Lead Programmer/Master Coder: Admain, Abdullah"
-			<<"\nDeveloped By: Lindo, Lance"
-			<<"\nDeveloped By: Alvarado, Rod"
-			<<"\nDeveloped By: Passion, Precious";
+			cout<<"\n Exiting";
 			return 0;
-			break;
 		default:
-			cout<<"\nInvalid Choice.";
-			break;
-	} while (choice !=8);
-	
+			cout<<"\nInvalid Choice. Try again\n\n";
+	} 
+} while (choice !=8);
 	return 0;
 }
