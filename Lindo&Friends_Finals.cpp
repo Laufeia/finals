@@ -53,6 +53,11 @@ void display() const {
 		cout << "Video ID: " << *it << endl;
 	}
 	}
+
+	void returnAllLaptops() {
+		rentedLaptops.clear();
+	}
+};
 	
 	
 
