@@ -142,6 +142,7 @@ void rentLaptop() {
         cout << "Rent another Laptop? [Y/N]: ";
         cin >> choice;
         cin.ignore();
+        cout<< "\n";
     } while (choice == 'Y' || choice == 'y');
 }
 
