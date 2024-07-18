@@ -23,6 +23,14 @@ public:
 
 	Customer(int id, string n, string a)
  	: customerID(id), name(n), address(a); {}
+
+void display() const {
+	cout << "Customer ID: " << customerID << "\nName: " << name << "\nAddress: " << address << endl; 
+}
+	static void addCustomer (VideoStore &store, int id, string name, string address);
+	static void showCustomerDetails (VideoStore &store, int customerID);
+	static void listAllCustomers (VideoStore &store);
+	static void listVideosRentedByCustomer (VideoStore &store, int customerID);
 	
 	
 
