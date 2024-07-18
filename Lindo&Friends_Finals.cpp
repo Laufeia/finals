@@ -299,7 +299,7 @@ void mainMenu() {
             break;
         case 8:
             running = false;
-            cout << "\nExiting.\n";
+            cout << "Exiting.\n";
             break;
         default:
             cout << "Invalid Choice. Try again.\n\n";
