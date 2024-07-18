@@ -93,7 +93,8 @@ int main(){
 	do{
 	P.mainMenu();
 	cin>>choice;
-	
+
+	//the code here is for no infinite loop especially when pressing letters or others.
 		if (cin.fail()){
 		cin.clear();
 		cin.ignore(10000, '\n');
@@ -120,7 +121,7 @@ int main(){
 			cout<<"\n Exiting";
 			return 0;
 		default:
-			cout<<"\nInvalid Choice. Try again\n\n";
+			cout<<"Invalid Choice. Try again\n\n";
 	} 
 } while (choice !=8);
 	return 0;
