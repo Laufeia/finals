@@ -12,6 +12,17 @@ class Laptop{
 protected:
 
 public:
+
+
+// Customer ADT
+class Customer {
+public:
+	int customerID;
+	string name;
+	string address;
+
+	Customer(int id, string n, string a)
+ 	: customerID(id), name(n), address(a); {}
 	
 	
 
