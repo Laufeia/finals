@@ -1,10 +1,10 @@
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <sstream>
 
 using namespace std;
 
@@ -37,7 +37,6 @@ public:
     Customer() : id(0) {}
 };
 
-// Derived class CustomerRent
 class CustomerRent : public Customer {
 public:
     vector<int> rentedLaptops;
@@ -78,12 +77,12 @@ private:
     Laptop laptopArray[100];
     Node* head = nullptr;
 
-	void loadLaptops() {
-    ifstream file("laptops.txt");
-    if (file.is_open()) {
-        string line;
-        while (getline(file, line)) {
-            if (line.empty()) continue; // Skip empty lines
+    void loadLaptops() {
+        ifstream file("laptops.txt");
+        if (file.is_open()) {
+            string line;
+            while (getline(file, line)) {
+                if (line.empty()) continue;
 
             int id;
             string processor, memory, graphics, os, audio;
@@ -115,7 +114,7 @@ private:
             laptops.emplace_back(id, processor, memory, graphics, os, audio);
             laptops.back().available = available;
 
-            if (id >= nextLaptopId) nextLaptopId = id + 1;
+        if (id >= nextLaptopId) nextLaptopId = id + 1;
 
             // Consume the empty line
             getline(file, line);
@@ -126,13 +125,10 @@ private:
     }
 }
 
-
-
-
-    void loadCustomers() {
+void loadCustomers() {
     ifstream file("customers.txt");
-    if (file.is_open()) {
-        while (!file.eof()) {
+    	if (file.is_open()) {
+            while (!file.eof()) {
             int id;
             string name, address;
             file >> id;
@@ -142,14 +138,6 @@ private:
             getline(file, address, ',');
 
             CustomerRent customer(id, name, address);
-
-            int laptopId;
-            while (file >> laptopId) {
-                customer.rentLaptop(laptopId);
-            }
-            file.clear();
-            file.ignore(numeric_limits<streamsize>::max(), '\n');
-
             customers[id] = customer;
             if (id >= nextCustomerId) nextCustomerId = id + 1;
         }
@@ -159,18 +147,47 @@ private:
     }
 }
 
-    void saveLaptops() {
+void loadCustomerRent() {
+    ifstream file("customer_rent.txt");
+    if (file.is_open()) {
+        while (!file.eof()) {
+            int id;
+            string name, address;
+            file >> id;
+            if (file.fail()) break;
+            file.ignore();
+            getline(file, name);
+            getline(file, address);
+
+            CustomerRent customer(id, name, address);
+
+            string rentedLaptopsLine;
+            getline(file, rentedLaptopsLine);
+            istringstream ss(rentedLaptopsLine);
+            int laptopId;
+            while (ss >> laptopId) {
+                customer.rentLaptop(laptopId);
+            }
+
+            customers[id] = customer;
+        }
+        file.close();
+    } else {
+        cout << "No customer_rent.txt file found. Creating a new one.\n";
+    }
+}
+
+void saveLaptops() {
     ofstream file("laptops.txt");
     if (file.is_open()) {
         for (const auto& laptop : laptops) {
             file << "ID: " << laptop.id << "\n"
-                 << "Processor: " << laptop.processor << "\n"
-                 << "Memory: " << laptop.memory << "\n"
-                 << "Graphics: " << laptop.graphics << "\n"
-                 << "OS: " << laptop.os << "\n"
-                 << "Audio: " << laptop.audio << "\n"
-                 << "Available: " << laptop.available << "\n"
-                 << endl; 
+                << "Processor: " << laptop.processor << "\n"
+                << "Memory: " << laptop.memory << "\n"
+                << "Graphics: " << laptop.graphics << "\n"
+                << "OS: " << laptop.os << "\n"
+                << "Audio: " << laptop.audio << "\n"
+                << "Available: " << laptop.available << "\n\n";
         }
         file.close();
     } else {
@@ -178,15 +195,11 @@ private:
     }
 }
 
-
 void saveCustomers() {
     ofstream file("customers.txt");
     if (file.is_open()) {
         for (const auto& [id, customer] : customers) {
             file << id << " " << customer.name << " " << customer.address << " ";
-            for (int laptopId : customer.rentedLaptops) {
-                file << laptopId << " ";
-            }
             file << endl;
         }
         file.close();
@@ -195,15 +208,15 @@ void saveCustomers() {
     }
 }
 
-
-    void saveCustomerRent() {
-        ofstream file("customer_rent.txt");
+void saveCustomerRent() {
+    ofstream file("customer_rent.txt");
+    if (file.is_open()) {
         for (const auto& [id, customer] : customers) {
             if (!customer.rentedLaptops.empty()) {
                 file << "Customer ID: " << id << "\n"
-                     << "Name: " << customer.name << "\n"
-                     << "Address: " << customer.address << "\n"
-                     << "Rented Laptops: ";
+                    << "Name: " << customer.name << "\n"
+                    << "Address: " << customer.address << "\n"
+                    << "Rented Laptops: ";
                 for (int laptopId : customer.rentedLaptops) {
                     file << laptopId << " ";
                 }
@@ -211,18 +224,22 @@ void saveCustomers() {
             }
         }
         file.close();
+    } else {
+        cout << "Error: Unable to open customer_rent.txt for saving.\n";
     }
+}
 
-    void addLaptopToList(int laptopId) {
-        Node* newNode = new Node(laptopId);
-        newNode->next = head;
-        head = newNode;
-    }
+void addLaptopToList(int laptopId) {
+    Node* newNode = new Node(laptopId);
+    newNode->next = head;
+    head = newNode;
+}
 
 public:
     LaptopRentalSystem() {
         loadLaptops();
         loadCustomers();
+        loadCustomerRent();
         addDefaultCustomers();
     }
 
@@ -237,68 +254,70 @@ public:
         }
     }
 
-    void addDefaultCustomers() {
-        if (customers.size() < 10) {
-            customers[1] = CustomerRent(1, "John Doe", "123 Main St");
-            customers[2] = CustomerRent(2, "Jane Smith", "456 Elm St");
-            customers[3] = CustomerRent(3, "Alice Johnson", "789 Maple St");
-            customers[4] = CustomerRent(4, "Bob Brown", "101 Oak St");
-            customers[5] = CustomerRent(5, "Carol White", "202 Pine St");
-            customers[6] = CustomerRent(6, "David Green", "303 Cedar St");
-            customers[7] = CustomerRent(7, "Eve Black", "404 Birch St");
-            customers[8] = CustomerRent(8, "Frank Blue", "505 Spruce St");
-            customers[9] = CustomerRent(9, "Grace Pink", "606 Willow St");
-            customers[10] = CustomerRent(10, "Hank Orange", "707 Redwood St");
-            nextCustomerId = 11;
-        }
+void addDefaultCustomers() {
+    if (customers.size() < 10) {
+        customers[1] = CustomerRent(1, "John Doe", "123 Main St");
+        customers[2] = CustomerRent(2, "Jane Smith", "456 Elm St");
+        customers[3] = CustomerRent(3, "Alice Johnson", "789 Maple St");
+        customers[4] = CustomerRent(4, "Bob Brown", "101 Oak St");
+        customers[5] = CustomerRent(5, "Carol White", "202 Pine St");
+        customers[6] = CustomerRent(6, "David Green", "303 Cedar St");
+        customers[7] = CustomerRent(7, "Eve Black", "404 Birch St");
+        customers[8] = CustomerRent(8, "Frank Blue", "505 Spruce St");
+        customers[9] = CustomerRent(9, "Grace Pink", "606 Willow St");
+        customers[10] = CustomerRent(10, "Hank Orange", "707 Redwood St");
+        nextCustomerId = 11;
     }
+}
 
-    void addNewLaptop() {
-        string processor, memory, graphics, os, audio;
-        cout << "\t\tSpecifications\n";
-        cout << "Processor: ";
-        cin.ignore();
-        getline(cin, processor);
-        cout << "Memory: ";
-        getline(cin, memory);
-        cout << "Graphics: ";
-        getline(cin, graphics);
-        cout << "Operating System: ";
-        getline(cin, os);
-        cout << "Audio: ";
-        getline(cin, audio);
-        laptops.emplace_back(nextLaptopId, processor, memory, graphics, os, audio);
-        laptopArray[nextLaptopId - 1] = laptops.back();
-        addLaptopToList(nextLaptopId);
-        nextLaptopId++;
-        cout << "New laptop added successfully!\n\n";
-    }
+void addNewLaptop() {
+    string processor, memory, graphics, os, audio;
+    cout << "\t\tSpecifications\n";
+    cout << "Processor: ";
+    cin.ignore();
+    getline(cin, processor);
+    cout << "Memory: ";
+    getline(cin, memory);
+    cout << "Graphics: ";
+    getline(cin, graphics);
+    cout << "Operating System: ";
+    getline(cin, os);
+    cout << "Audio: ";
+    getline(cin, audio);
+    laptops.emplace_back(nextLaptopId, processor, memory, graphics, os, audio);
+    laptopArray[nextLaptopId - 1] = laptops.back();
+    addLaptopToList(nextLaptopId);
+    nextLaptopId++;
+    cout << "New laptop added successfully!\n\n";
+    saveLaptops();
+}
 
-    void rentLaptop() {
+void rentLaptop() {
         char choice;
-        do {
-            int customerId, laptopId;
-            cout << "Customer ID: ";
-            cin >> customerId;
-            cout << "Laptop ID: ";
-            cin >> laptopId;
-            auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
-            if (laptop != laptops.end() && laptop->available) {
-                laptop->available = false;
-                customers[customerId].rentLaptop(laptopId);
-                cout << "Laptop rented successfully!\n\n";
-            } else {
-                cout << "Laptop is not available.\n\n";
-            }
+    do {
+        int customerId, laptopId;
+        cout << "Customer ID: ";
+        cin >> customerId;
+        cout << "Laptop ID: ";
+        cin >> laptopId;
+        auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
+        if (laptop != laptops.end() && laptop->available) {
+            laptop->available = false;
+            customers[customerId].rentLaptop(laptopId);
+            cout << "Laptop rented successfully!\n\n";
+            saveLaptops();
+            saveCustomerRent();
+        } else {
+            cout << "Laptop not available or not found.\n\n";
+        }
+        cout << "Rent another Laptop? [Y/N]: ";
+        cin >> choice;
+        cin.ignore();
+        cout << "\n";
+    } while (choice == 'Y' || choice == 'y');
+}
 
-            cout << "Rent another Laptop? [Y/N]: ";
-            cin >> choice;
-            cin.ignore();
-            cout << "\n";
-        } while (choice == 'Y' || choice == 'y');
-    }
-
-    void returnLaptop() {
+void returnLaptop() {
     int customerId, laptopId;
     cout << "Customer ID: ";
     cin >> customerId;
@@ -307,126 +326,126 @@ public:
     auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
     if (laptop != laptops.end() && !laptop->available) {
         laptop->available = true;
-        auto& rentedLaptops = customers[customerId].rentedLaptops;
-        rentedLaptops.erase(remove(rentedLaptops.begin(), rentedLaptops.end(), laptopId), rentedLaptops.end());
-        // Update customers.txt file
-        saveCustomers();
+        customers[customerId].returnLaptop(laptopId);
         cout << "Laptop returned successfully!\n\n";
+        saveLaptops();
+        saveCustomerRent();
     } else {
-        cout << "Laptop not currently rented.\n\n";
+        cout << "Laptop not currently rented or not found.\n\n";
     }
 }
 
-    void showLaptopSpecs() {
-        int laptopId;
-        cout << "Laptop ID: ";
-        cin >> laptopId;
-        auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
-        if (laptop != laptops.end()) {
-            cout << "Processor: " << laptop->processor << "\n"
-                 << "Memory: " << laptop->memory << "\n"
-                 << "Graphics: " << laptop->graphics << "\n"
-                 << "Operating System: " << laptop->os << "\n"
-                 << "Audio: " << laptop->audio << "\n"
-                 << "Available: " << (laptop->available ? "Yes" : "No") << "\n\n";
-        } else {
-            cout << "Laptop not found.\n\n";
-        }
+void showLaptopSpecs() {
+    int laptopId;
+    cout << "Laptop ID: ";
+    cin >> laptopId;
+    auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
+    if (laptop != laptops.end()) {
+        cout << "Processor: " << laptop->processor << "\n"
+            << "Memory: " << laptop->memory << "\n"
+            << "Graphics: " << laptop->graphics << "\n"
+            << "Operating System: " << laptop->os << "\n"
+            << "Audio: " << laptop->audio << "\n"
+            << "Available: " << (laptop->available ? "Yes" : "No") << "\n\n";
+    } else {
+        cout << "Laptop not found.\n\n";
     }
+}
 
-    void displayAllLaptops() {
-        for (const auto& laptop : laptops) {
-            cout << "ID: " << laptop.id << ", Processor: " << laptop.processor << ", Memory: "
-                 << laptop.memory << ", Graphics: " << laptop.graphics << ", OS: " << laptop.os
-                 << ", Audio: " << laptop.audio << ", Available: " << (laptop.available ? "Yes" : "No") << "\n\n";
-        }
+void displayAllLaptops() {
+    for (const auto& laptop : laptops) {
+        cout << "ID: " << laptop.id << ", Processor: " << laptop.processor << ", Memory: "
+            << laptop.memory << ", Graphics: " << laptop.graphics << ", OS: " << laptop.os
+            << ", Audio: " << laptop.audio << ", Available: " << (laptop.available ? "Yes" : "No") << "\n\n";
     }
+}
 
-    void checkLaptopAvailability() {
-        int laptopId;
-        cout << "Laptop ID: ";
-        cin >> laptopId;
-        auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
-        if (laptop != laptops.end()) {
-            cout << "Available: " << (laptop->available ? "Yes" : "No") << "\n\n";
-        } else {
-            cout << "Laptop not found.\n\n";
-        }
+void checkLaptopAvailability() {
+    int laptopId;
+    cout << "Laptop ID: ";
+    cin >> laptopId;
+    auto laptop = find_if(laptops.begin(), laptops.end(), [laptopId](Laptop& l) { return l.id == laptopId; });
+    if (laptop != laptops.end()) {
+        cout << "Available: " << (laptop->available ? "Yes" : "No") << "\n\n";
+    } else {
+        cout << "Laptop not found.\n\n";
     }
+}
 
-    void addNewCustomer() {
-        string name, address;
-        cout << "Name: ";
-        cin.ignore();
-        getline(cin, name);
-        cout << "Address: ";
-        getline(cin, address);
-        customers[nextCustomerId] = CustomerRent(nextCustomerId, name, address);
-        cout << "New customer added successfully! Customer ID: " << nextCustomerId++ << "\n\n";
+void addNewCustomer() {
+    string name, address;
+    cout << "Name: ";
+    cin.ignore();
+    getline(cin, name);
+    cout << "Address: ";
+    getline(cin, address);
+    customers[nextCustomerId] = CustomerRent(nextCustomerId, name, address);
+    cout << "New customer added successfully! Customer ID: " << nextCustomerId++ << "\n\n";
+    saveCustomers();
+}
+
+void showCustomerDetails() {
+    int customerId;
+    cout << "Customer ID: ";
+    cin >> customerId;
+    if (customers.find(customerId) != customers.end()) {
+        auto& customer = customers[customerId];
+        cout << "Name: " << customer.name << "\n";
+        cout << "Address: " << customer.address << "\n\n";
+    } else {
+        cout << "Customer not found.\n\n";
     }
+}
 
-    void showCustomerDetails() {
-        int customerId;
-        cout << "Customer ID: ";
-        cin >> customerId;
-        if (customers.find(customerId) != customers.end()) {
-            auto& customer = customers[customerId];
-            cout << "Name: " << customer.name << "\n";
-            cout << "Address: " << customer.address << "\n\n";
-        } else {
-            cout << "Customer not found.\n\n";
-        }
+void listLaptopsRentedByCustomer() {
+    int customerId;
+    cout << "Customer ID: ";
+    cin >> customerId;
+    if (customers.find(customerId) != customers.end()) {
+        customers[customerId].listRentedLaptops();
+    } else {
+        cout << "Customer not found.\n\n";
     }
+}
 
-    void listLaptopsRentedByCustomer() {
-        int customerId;
-        cout << "Customer ID: ";
-        cin >> customerId;
-        if (customers.find(customerId) != customers.end()) {
-            customers[customerId].listRentedLaptops();
-        } else {
-            cout << "Customer not found.\n\n";
-        }
+void maintenanceMenu() {
+    int choice;
+    cout << "[1] Add new Customer\n"
+        << "[2] Show Customer Details\n"
+        << "[3] List of Laptops Rented by a Customer\n"
+        << "Enter Choice: ";
+    cin >> choice;
+switch (choice) {
+    case 1:
+        addNewCustomer();
+        break;
+    case 2:
+        showCustomerDetails();
+        break;
+    case 3:
+        listLaptopsRentedByCustomer();
+        break;
+    default:
+        cout << "Invalid choice.\n\n";
+        break;
     }
+}
 
-    void maintenanceMenu() {
-        int choice;
-        cout << "[1] Add new Customer\n"
-             << "[2] Show Customer Details\n"
-             << "[3] List of Laptops Rented by a Customer\n"
-             << "Enter Choice: ";
-        cin >> choice;
-        switch (choice) {
-        case 1:
-            addNewCustomer();
-            break;
-        case 2:
-            showCustomerDetails();
-            break;
-        case 3:
-            listLaptopsRentedByCustomer();
-            break;
-        default:
-            cout << "Invalid choice.\n\n";
-            break;
-        }
-    }
-
-    void mainMenu() {
-        int choice;
-        bool running = true;
-        while (running) {
-            cout << "Welcome to Lindo & Friends Laptop Rental\n"
-                 << "[1] - Add New Laptop\n"
-                 << "[2] - Rent Laptop\n"
-                 << "[3] - Return a Laptop\n"
-                 << "[4] - Show Laptop Specs\n"
-                 << "[5] - Display all Laptops\n"
-                 << "[6] - Check Laptop Availability\n"
-                 << "[7] - Laptop Maintenance\n"
-                 << "[8] - Exit\n"
-                 << "Choice: ";
-            cin >> choice;
+void mainMenu() {
+    int choice;
+    bool running = true;
+    while (running) {
+        cout << "Welcome to Lindo & Friends Laptop Rental\n"
+            << "[1] - Add New Laptop\n"
+            << "[2] - Rent Laptop\n"
+            << "[3] - Return a Laptop\n"
+            << "[4] - Show Laptop Specs\n"
+            << "[5] - Display all Laptops\n"
+            << "[6] - Check Laptop Availability\n"
+            << "[7] - Laptop Maintenance\n"
+            << "[8] - Exit\n"
+            << "Choice: ";
+        	cin >> choice;
             if (cin.fail()) {
                 cin.clear();
                 cin.ignore(10000, '\n');
